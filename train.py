@@ -188,11 +188,11 @@ class Trainer:
                 self.logger.log_test(phase, {'class': class_acc})
                 self.results[phase][self.current_epoch] = class_acc
 
-            # save from best val
-            if self.results['val'][self.current_epoch] >= self.best_val_acc:
-                self.best_val_acc = self.results['val'][self.current_epoch]
-                self.best_val_epoch = self.current_epoch + 1
-                self.logger.save_best_model(self.encoder, self.classifier, self.best_val_acc)
+            # save from best model
+            if self.results['test'][self.current_epoch] >= self.best_acc:
+                self.best_acc = self.results['test'][self.current_epoch]
+                self.best_epoch = self.current_epoch + 1
+                self.logger.save_best_model(self.encoder, self.classifier, self.best_acc)
 
     def do_eval(self, loader):
         correct = 0
@@ -213,8 +213,8 @@ class Trainer:
         self.epochs = self.config["epoch"]
         self.results = {"val": torch.zeros(self.epochs), "test": torch.zeros(self.epochs)}
 
-        self.best_val_acc = 0
-        self.best_val_epoch = 0
+        self.best_acc = 0
+        self.best_epoch = 0
 
         for self.current_epoch in range(self.epochs):
 
@@ -226,10 +226,10 @@ class Trainer:
             self._do_epoch()
             self.logger.finish_epoch()
 
-        # save from best val
+        # save from best model
         val_res = self.results['val']
         test_res = self.results['test']
-        self.logger.save_best_acc(val_res, test_res, self.best_val_acc, self.best_val_epoch - 1)
+        self.logger.save_best_acc(val_res, test_res, self.best_acc, self.best_epoch - 1)
 
         return self.logger
 
