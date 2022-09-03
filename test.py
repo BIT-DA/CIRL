@@ -57,6 +57,7 @@ class Evaluator:
             data, labels, domains = batch[0].to(self.device), batch[1].to(self.device), domain.to(self.device)
             if self.args.target in pacs_dataset:
                 labels -= 1
+                
             features = self.encoder(data)
             scores = self.classifier(features)
             correct += calculate_correct(scores, labels)
