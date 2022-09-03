@@ -8,7 +8,8 @@ This repo provides a demo for the CVPR 2022 paper "Causality Inspired Representa
 * `Pytorch 1.1.0`
 
 ### Training from scratch 
-Please first download the PACS dataset from http://www.eecs.qmul.ac.uk/~dl307/project_iccv2017. Then update the files with suffix `_train.txt` and `_val.txt` in `data/datalists` for each domain, following styles below:
+Please first download the PACS dataset from http://www.eecs.qmul.ac.uk/~dl307/project_iccv2017 or from https://pan.baidu.com/s/1KxMA6SiQX1jdRxwkeKMqOw 
+(password：pacs). Then update the files with suffix `_train.txt` and `_val.txt` in `data/datalists` for each domain, following styles below:
 
 ```
 /home/user/data/images/PACS/kfold/art_painting/dog/pic_001.jpg 0
