@@ -10,19 +10,18 @@ parser.add_argument("--times", "-t", default=1, type=int, help="Repeat times")
 args = parser.parse_args()
 
 ###############################################################################
-
 source = ["photo", "cartoon", "art_painting", "sketch"]
 target = args.domain
 source.remove(target)
 
-input_dir = 'path/to/data'
-output_dir = 'path/to/output'
-ckpt_path = f'./ckpt/{target}/best_model.tar'
+input_dir = '/PACS/kfold'
+output_dir = 'outputs'
 
-config = "PACS/ResNet50"
+config = "PACS/ResNet18"
 
 domain_name = target
 path = os.path.join(output_dir, config.replace("/", "_"), domain_name)
+ckpt_path = os.path.join(path, 'best_model.tar')
 ##############################################################################
 
 for i in range(args.times):
