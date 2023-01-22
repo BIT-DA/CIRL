@@ -16,7 +16,7 @@ source = ["photo", "cartoon", "art_painting", "sketch"]
 target = args.domain
 source.remove(target)
 
-input_dir = '/data1/TL/data/PACS/kfold'
+input_dir = '/content/CIRL/data/datalists'
 output_dir = 'outputs'
 
 config = "PACS/ResNet50"
