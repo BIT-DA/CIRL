@@ -17,7 +17,7 @@ source.remove(target)
 input_dir = '/content/CIRL/data/datalists'
 output_dir = 'outputs'
 
-config = "PACS/ResNet50"
+config = "PACS/ResNet18"
 
 domain_name = target
 path = os.path.join(output_dir, config.replace("/", "_"), domain_name)
