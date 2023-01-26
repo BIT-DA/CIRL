@@ -79,7 +79,7 @@ def factorization_loss(f_a, f_b):
 
     element_wise_ = 0.5 * (0 - torch.log(f_b_norm.std(0)) + f_b_norm.std(0) / 1 + (f_b_norm.mean(0) - 0).pow(2) / 1 - 1)
     kl_2 = element_wise_.sum(-1)
-    #return kl
+    ###return kl
 
 
 
