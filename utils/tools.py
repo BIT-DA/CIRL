@@ -88,7 +88,7 @@ def cluster_based(representations, n_cluster: int, n_pc: int):
             """
 
 
-  centroid, label=clst.vq.kmeans2(representations.detach().numpy(), n_cluster, minit='points',
+  centroid, label=clst.vq.kmeans2(representations.detach().numpy().cpu(), n_cluster, minit='points',
                                   missing='warn', check_finite=True)
   cluster_mean=[]
   for i in range(max(label)+1):
