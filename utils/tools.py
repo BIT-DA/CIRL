@@ -67,25 +67,101 @@ def off_diagonal(x):
     assert n == m
     return x.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
 
+
+from scipy import cluster as clst
+from sklearn.decomposition import PCA
+from IPython.display import clear_output
+
+def cluster_based(representations, n_cluster: int, n_pc: int):
+  """ Improving Isotropy of input representations using cluster-based method
+      Args: 
+            inputs:
+                  representations: 
+                    input representations numpy array(n_samples, n_dimension)
+                  n_cluster: 
+                    the number of clusters
+                  n_pc: 
+                    the number of directions to be discarded
+            output:
+                  isotropic representations (n_samples, n_dimension)
+
+            """
+
+
+  centroid, label=clst.vq.kmeans2(representations, n_cluster, minit='points',
+                                  missing='warn', check_finite=True)
+  cluster_mean=[]
+  for i in range(max(label)+1):
+    sum=np.zeros([1,2048]);
+    for j in np.nonzero(label == i)[0]:
+      sum=np.add(sum, representations[j])
+    cluster_mean.append(sum/len(label[label == i]))
+
+  zero_mean_representation=[]
+  for i in range(len(representations)):
+    zero_mean_representation.append((representations[i])-cluster_mean[label[i]])
+
+  cluster_representations={}
+  for i in range(n_cluster):
+    cluster_representations.update({i:{}})
+    for j in range(len(representations)):
+      if (label[j]==i):
+        cluster_representations[i].update({j:zero_mean_representation[j]})
+
+  cluster_representations2=[]
+  for j in range(n_cluster):
+    cluster_representations2.append([])
+    for key, value in cluster_representations[j].items():
+      cluster_representations2[j].append(value)
+
+  cluster_representations2=np.array(cluster_representations2)
+
+
+  model=PCA()
+  post_rep=np.zeros((representations.shape[0],representations.shape[1]))
+
+  for i in range(n_cluster):
+      model.fit(np.array(cluster_representations2[i]).reshape((-1,2048)))
+      component = np.reshape(model.components_, (-1, 2048))
+
+      for index in cluster_representations[i]:
+        sum_vec = np.zeros((1, 2048))
+
+        for j in range(n_pc):
+                sum_vec = sum_vec + np.dot(cluster_representations[i][index],
+                          np.transpose(component)[:,j].reshape((2048,1))) * component[j]
+        
+        post_rep[index]=cluster_representations[i][index] - sum_vec
+
+  clear_output()
+
+  return post_rep
+
+
+
+
 def factorization_loss(f_a, f_b):
     # empirical cross-correlation matrix
-    f_a_norm = (f_a - f_a.mean(0)) / (f_a.std(0)+1e-6)
-    f_b_norm = (f_b - f_b.mean(0)) / (f_b.std(0)+1e-6)
+    #f_a_norm = (f_a - f_a.mean(0)) / (f_a.std(0)+1e-6)
+    #f_b_norm = (f_b - f_b.mean(0)) / (f_b.std(0)+1e-6)
     #f_a_norm = f_a
     #f_b_norm = f_b
 
-    element_wise = 0.5 * (0 - torch.log(f_a.std()) + f_a.std() / 1 + (f_a.mean() - 0).pow(2) / 1 - 1)
-    kl_1 = element_wise.sum(-1)
+    #element_wise = 0.5 * (0 - torch.log(f_a.std()) + f_a.std() / 1 + (f_a.mean() - 0).pow(2) / 1 - 1)
+    #kl_1 = element_wise.sum(-1)
 
-    element_wise_ = 0.5 * (0 - torch.log(f_b.std()) + f_b.std() / 1 + (f_b.mean() - 0).pow(2) / 1 - 1)
-    kl_2 = element_wise_.sum(-1)
+    #element_wise_ = 0.5 * (0 - torch.log(f_b.std()) + f_b.std() / 1 + (f_b.mean() - 0).pow(2) / 1 - 1)
+    #kl_2 = element_wise_.sum(-1)
     ###return kl
 
-    element_wise = 0.5 * (0 - torch.log(f_a.std(1)) + f_a.std(1) / 1 + (f_a.mean(1) - 0).pow(2) / 1 - 1)
-    kl_1_ = element_wise.sum(-1)
+    #element_wise = 0.5 * (0 - torch.log(f_a.std(1)) + f_a.std(1) / 1 + (f_a.mean(1) - 0).pow(2) / 1 - 1)
+    #kl_1_ = element_wise.sum(-1)
 
-    element_wise_ = 0.5 * (0 - torch.log(f_b.std(1)) + f_b.std(1) / 1 + (f_b.mean(1) - 0).pow(2) / 1 - 1)
-    kl_2_ = element_wise_.sum(-1)
+    #element_wise_ = 0.5 * (0 - torch.log(f_b.std(1)) + f_b.std(1) / 1 + (f_b.mean(1) - 0).pow(2) / 1 - 1)
+    #kl_2_ = element_wise_.sum(-1)
+
+    f_a_norm = cluster_based(f_a,1,1)
+    f_b_norm = cluster_based(f_b,1,1)
 
     c = torch.mm(f_a_norm.T, f_b_norm) / f_a_norm.size(0)
 
@@ -93,4 +169,4 @@ def factorization_loss(f_a, f_b):
     off_diag = off_diagonal(c).pow_(2).mean()
     loss = on_diag + 0.005 * off_diag
 
-    return loss + 0.1*(kl_1 + kl_2 + kl_1_ + kl_2_)
+    return loss
