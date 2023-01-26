@@ -95,6 +95,7 @@ def cluster_based(representations, n_cluster: int, n_pc: int):
   for i in range(max(label)+1):
     sum=np.zeros([1,2048]);
     for j in np.nonzero(label == i)[0]:
+      print("representations[j].shape",representations[j].shape)
       sum=np.add(sum, representations[j])
     cluster_mean.append(sum/len(label[label == i]))
 
