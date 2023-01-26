@@ -93,7 +93,7 @@ def cluster_based(representations, n_cluster: int, n_pc: int):
                                   missing='warn', check_finite=True)
   cluster_mean=[]
   for i in range(max(label)+1):
-    sum=np.zeros([1,2048]);
+    sum=np.zeros([1,512]);
     for j in np.nonzero(label == i)[0]:
       #print("representations[j].shape",representations[j].shape)
       #print("sum.shape",sum.shape)
@@ -124,15 +124,15 @@ def cluster_based(representations, n_cluster: int, n_pc: int):
   post_rep=np.zeros((representations.shape[0],representations.shape[1]))
 
   for i in range(n_cluster):
-      model.fit(np.array(cluster_representations2[i]).reshape((-1,2048)))
-      component = np.reshape(model.components_, (-1, 2048))
+      model.fit(np.array(cluster_representations2[i]).reshape((-1,512)))
+      component = np.reshape(model.components_, (-1, 512))
 
       for index in cluster_representations[i]:
-        sum_vec = np.zeros((1, 2048))
+        sum_vec = np.zeros((1, 512))
 
         for j in range(n_pc):
                 sum_vec = sum_vec + np.dot(cluster_representations[i][index],
-                          np.transpose(component)[:,j].reshape((2048,1))) * component[j]
+                          np.transpose(component)[:,j].reshape((512,1))) * component[j]
         
         post_rep[index]=cluster_representations[i][index] - sum_vec
 
