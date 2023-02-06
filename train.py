@@ -13,7 +13,7 @@ from data import *
 from utils.Logger import Logger
 from utils.tools import *
 from models.classifier import Masker
-from utils import tools
+
 import warnings
 warnings.filterwarnings("ignore")
 from warnings import simplefilter
