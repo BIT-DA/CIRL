@@ -151,7 +151,7 @@ class Trainer:
             self.masker_optim.zero_grad()
             features_ = self.encoder(batch)
             features = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
-            masks_sup = self.masker(features.detach())
+            masks_sup = self.masker(features)
             masks_inf = torch.ones_like(masks_sup) - masks_sup
             features_sup = features * masks_sup
             features_inf = features * masks_inf
