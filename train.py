@@ -96,7 +96,11 @@ class Trainer:
             total_loss = 0.0
 
             ## --------------------------step 1 : update G and C -----------------------------------
-            features = self.encoder(batch)
+            features_ = self.encoder(batch)
+            #print("shape first:",type(features_))
+            features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
+            features = features___.to(self.device)
+            #print("shape second:",type(features))
             masks_sup = self.masker(features.detach())
             masks_inf = torch.ones_like(masks_sup) - masks_sup
             if self.current_epoch <= 5:
@@ -150,10 +154,10 @@ class Trainer:
             ## ---------------------------------- step2: update masker------------------------------
             self.masker_optim.zero_grad()
             features_ = self.encoder(batch)
-            print("shape first:",type(features_))
+            #print("shape first:",type(features_))
             features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
             features = features___.to(self.device)
-            print("shape second:",type(features))
+            #print("shape second:",type(features))
             masks_sup = self.masker(features.detach())
             masks_inf = torch.ones_like(masks_sup) - masks_sup
             features_sup = features * masks_sup
