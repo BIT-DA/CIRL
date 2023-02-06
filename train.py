@@ -96,8 +96,9 @@ class Trainer:
             total_loss = 0.0
 
             ## --------------------------step 1 : update G and C -----------------------------------
-            features_ = self.encoder(batch)
+            features_a = self.encoder(batch)
             #print("shape first:",type(features_))
+            features_ = (features_a - features_a.mean(0)) / (features_a.std(0)+1e-6)
             features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
             features = features___.to(self.device)
             #print("shape second:",type(features))
