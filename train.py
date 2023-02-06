@@ -13,7 +13,7 @@ from data import *
 from utils.Logger import Logger
 from utils.tools import *
 from models.classifier import Masker
-
+from utils import tools
 import warnings
 warnings.filterwarnings("ignore")
 from warnings import simplefilter
@@ -65,7 +65,8 @@ class Trainer:
         self.val_loader = get_val_dataloader(args=self.args, config=self.config)
         self.test_loader = get_test_loader(args=self.args, config=self.config)
         self.eval_loader = {'val': self.val_loader, 'test': self.test_loader}
-
+    
+    
     def _do_epoch(self):
         criterion = nn.CrossEntropyLoss()
 
@@ -148,7 +149,8 @@ class Trainer:
 
             ## ---------------------------------- step2: update masker------------------------------
             self.masker_optim.zero_grad()
-            features = self.encoder(batch)
+            features_ = self.encoder(batch)
+            features = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
             masks_sup = self.masker(features.detach())
             masks_inf = torch.ones_like(masks_sup) - masks_sup
             features_sup = features * masks_sup
