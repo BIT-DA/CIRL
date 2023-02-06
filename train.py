@@ -98,9 +98,9 @@ class Trainer:
             ## --------------------------step 1 : update G and C -----------------------------------
             features_a = self.encoder(batch)
             #print("shape first:",type(features_))
-            features = (features_a - features_a.mean(0)) / (features_a.std(0)+1e-6)
-            #features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
-            #features = features___.to(self.device)
+            features_ = (features_a - features_a.mean(0)) / (features_a.std(0)+1e-6)
+            features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),64,1))
+            features = features___.to(self.device)
             #print("shape second:",type(features))
             masks_sup = self.masker(features.detach())
             masks_inf = torch.ones_like(masks_sup) - masks_sup
@@ -156,10 +156,10 @@ class Trainer:
             self.masker_optim.zero_grad()
             features_a = self.encoder(batch)
             #print("shape first:",type(features_))
-            features = (features_a - features_a.mean(0)) / (features_a.std(0)+1e-6)
+            features_ = (features_a - features_a.mean(0)) / (features_a.std(0)+1e-6)
             #print("shape first:",type(features_))
-            #features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),1,1))
-            #features = features___.to(self.device)
+            features___ = torch.Tensor(cluster_based(features_.cpu().detach().numpy(),64,1))
+            features = features___.to(self.device)
             #print("shape second:",type(features))
             masks_sup = self.masker(features.detach())
             masks_inf = torch.ones_like(masks_sup) - masks_sup
